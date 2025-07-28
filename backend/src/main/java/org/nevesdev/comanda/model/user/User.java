@@ -30,7 +30,7 @@ public class User implements UserDetails {
     private String password;
     private Role role;
 
-    @OneToOne
+    @ManyToOne
     private Bar bar;
 
     public User(UserRegister userRegister) {

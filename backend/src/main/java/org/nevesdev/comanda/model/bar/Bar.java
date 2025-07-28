@@ -3,6 +3,8 @@ package org.nevesdev.comanda.model.bar;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Entity
 @Data
 public class Bar {
@@ -25,5 +27,17 @@ public class Bar {
     public Bar(String barName, Address address) {
         this.barName = barName;
         this.address = address;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Bar bar = (Bar) o;
+        return Objects.equals(barName, bar.barName) && Objects.equals(address, bar.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(barName, address);
     }
 }

@@ -58,14 +58,26 @@ Sistema completo para controle de vendas, comandas e produtos em estabelecimento
 - Node.js 18+
 - PostgreSQL
 
-### Backend (Spring Boot)
+### 🐳 Execução com Docker (Recomendado)
+
+```bash
+# Construir e iniciar o container
+docker compose up --build
+
+# Parar os serviços
+docker compose down
+
+```
+
+### 🖥️ Backend (Spring Boot)
 ```bash
 cd backend
+./mvnw clean install
 ./mvnw spring-boot:run
 
 ```
 
-### Frontend (React)
+### 💻 Frontend (React)
 ```bash
 cd frontend
 npm install

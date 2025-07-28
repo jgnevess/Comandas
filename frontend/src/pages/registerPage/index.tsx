@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Container from "../../components/container";
 import Input from "../../components/inputwithlabel";
 import Alert from "../../components/alert";
 import { handleRegisterUser, UserRegister, UserResponse } from "../../services/authservice/authservice";
 import { ErrorRequest } from "../../services/productService/productService";
+import { Address, Bar, handleRequestBar } from "../../services/barService/barService";
 
 const RegisterPage = () => {
 
@@ -17,6 +18,11 @@ const RegisterPage = () => {
     const [successAlert, setSuccessAlert] = useState(false)
     const [successMsg, setSuccessMsg] = useState('');
 
+    const [barName, setBarName] = useState('')
+    const [barAddress, setBarAddress] = useState('')
+    const [barNumber, setBarNumber] = useState('')
+
+
     const roles = [
         { role: 'ADMIN', description: 'Administrador' },
         { role: 'SUPER', description: 'Administrador do sistema' },
@@ -25,6 +31,20 @@ const RegisterPage = () => {
 
     useEffect(() => {
         document.title = "Comandas - Registrar";
+        const id = localStorage.getItem('barId');
+        if (id) {
+            handleRequestBar(Number.parseInt(id)).then(response => {
+                const data = response.response as Bar;
+                setBarName(data.barName)
+                setBarAddress(data.address.streetName)
+                setBarNumber(data.address.streetNumber)
+            })
+        } else {
+            setBarName('')
+            setBarAddress('')
+            setBarNumber('0')
+        }
+
     }, []);
 
     const Roles = roles.map((r, k) => {
@@ -49,7 +69,9 @@ const RegisterPage = () => {
             setTimeout(() => { setErrorAlert(false) }, 2500)
         }
         else {
-            const user = { username, passwd, role } as UserRegister;
+            const add = {streetName: barAddress, streetNumber: barNumber} as Address
+            const bar = {barName: barName, address: add } as Bar
+            const user = { username, passwd, role, barCreate: bar } as UserRegister;
             handleRegisterUser(user).then(response => {
                 if (response.status !== 201) {
                     const data = response.response as ErrorRequest
@@ -67,6 +89,24 @@ const RegisterPage = () => {
                     setTimeout(() => { setSuccessAlert(false) }, 2500)
                 }
             })
+
+        }
+    }
+
+
+    const handleSetBar = () => {
+        const id = localStorage.getItem('barId');
+        if(barName.trim() === '') {
+            handleRequestBar(Number.parseInt(id!)).then(response => {
+                const data = response.response as Bar;
+                setBarName(data.barName)
+                setBarAddress(data.address.streetName)
+                setBarNumber(data.address.streetNumber)
+            })
+        } else {
+            setBarName('')
+            setBarAddress('')
+            setBarNumber('')
         }
     }
 
@@ -92,6 +132,24 @@ const RegisterPage = () => {
                         onChange={setConfirmPasswd}
                         type="password"
                         value={confirmPasswd} />
+                    <Input label="Nome do bar"
+                        onBlur={() => { }}
+                        onChange={setBarName}
+                        type="text"
+                        value={barName} disabled={barName.trim() !== ''} />
+                    <div className="d-flex w-75 ">
+                        <Input label="Endereço"
+                            onBlur={() => { }}
+                            onChange={setBarAddress}
+                            type="text"
+                            value={barAddress} disabled={barName.trim() !== ''} />
+                        <Input label="número"
+                            onBlur={() => { }}
+                            onChange={setBarNumber}
+                            type="text"
+                            value={barNumber} disabled={barName.trim() !== ''} />
+                    </div>
+
                     <div className="row w-75 justify-content-center">
                         <div className="col-6 d-flex justify-content-start">
                             <select onChange={(e) => setRole(e.target.value)} value={role} className="form-select form-select-sm">
@@ -100,6 +158,10 @@ const RegisterPage = () => {
                             </select>
                         </div>
                         <div className="col-6 d-flex justify-content-end gap-2">
+                            <div className="d-flex gap-2 align-items-center">
+                                <input type="checkbox" value={barName} onChange={handleSetBar} id="barEdit" />
+                                <label htmlFor="barEdit">Editar bar</label>
+                            </div>
                             <button type="button" onClick={handleLogout} className="btn btn-dark">Sair</button>
                             <button type="submit" className="btn btn-dark">Cadastrar</button>
                         </div>

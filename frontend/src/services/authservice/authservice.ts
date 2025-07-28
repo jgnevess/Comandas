@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { ErrorRequest } from "../productService/productService";
 import { use } from "react";
+import { Bar } from "../barService/barService";
 
 const apiUrl = process.env.REACT_APP_API_URL
 
@@ -27,6 +28,7 @@ export interface UserRegister {
     username: string
     passwd: string
     role: string
+    barCreate: Bar
 }
 
 export interface UserResponse {
@@ -88,6 +90,7 @@ const handleValidToken = async (token: string): Promise<TokenResponse> => {
 }
 
 const handleRegisterUser = async (user: UserRegister): Promise<Response> => {
+    console.log(user)
     try {
         const response = await axios.post<UserResponse>(`${apiUrl}/auth/register`, user, {
             headers: headers
