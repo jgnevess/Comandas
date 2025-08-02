@@ -65,7 +65,7 @@ public class AuthService implements UserDetailsService {
             BarCreate bc = new BarCreate();
             Address address = new Address();
             address.setStreetName("Rua 1");
-            address.setStreetName("800");
+            address.setStreetNumber("800");
             bc.setBarName("Bar exemplo");
             bc.setAddress(address);
             ur.setUsername("Super");
